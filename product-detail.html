@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Detail - WANZ SHOP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+        /* Product Detail Specific Styles */
+        .product-detail {
+            padding: 120px 0 var(--spacing-3xl);
+            min-height: 100vh;
+        }
+        
+        .detail-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-2xl);
+            align-items: start;
+        }
+        
+        .detail-image {
+            position: relative;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            aspect-ratio: 4/3;
+        }
+        
+        .detail-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .detail-info {
+            padding: var(--spacing-lg) 0;
+        }
+        
+        .detail-category {
+            font-size: var(--font-size-sm);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .detail-name {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+            line-height: 1.2;
+        }
+        
+        .detail-price {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .detail-description {
+            color: var(--text-secondary);
+            font-size: var(--font-size-lg);
+            line-height: 1.8;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .detail-actions {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+        
+        .detail-actions .btn-primary {
+            font-size: var(--font-size-lg);
+            padding: 16px 48px;
+        }
+        
+        .detail-actions .btn-secondary {
+            font-size: var(--font-size-lg);
+            padding: 16px 48px;
+        }
+        
+        .detail-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            color: var(--text-secondary);
+        }
+        
+        .detail-loading .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent-rose);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .detail-not-found {
+            text-align: center;
+            padding: var(--spacing-3xl) 0;
+        }
+        
+        .detail-not-found h2 {
+            font-size: var(--font-size-2xl);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .detail-not-found p {
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        @media (max-width: 1024px) {
+            .detail-container {
+                gap: var(--spacing-xl);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .detail-container {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-lg);
+            }
+            
+            .detail-name {
+                font-size: var(--font-size-2xl);
+            }
+            
+            .detail-price {
+                font-size: var(--font-size-xl);
+            }
+            
+            .detail-description {
+                font-size: var(--font-size-md);
+            }
+            
+            .detail-actions {
+                flex-direction: column;
+            }
+            
+            .detail-actions .btn-primary,
+            .detail-actions .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-text">WANZ</span>
+                <span class="logo-shop">SHOP</span>
+            </a>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#products">Products</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Product Detail -->
+    <section class="product-detail">
+        <div class="container" id="detailContent">
+            <!-- Dynamically loaded -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-text">WANZ</span>
+                    <span class="logo-shop">SHOP</span>
+                    <p class="footer-desc">Premium digital products for everyone</p>
+                </div>
+                <div class="footer-links">
+                    <a href="index.html">Home</a>
+                    <a href="index.html#products">Products</a>
+                    <a href="index.html#about">About</a>
+                    <a href="index.html#contact">Contact</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 WANZ SHOP. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { CONFIG } from './js/config.js';
+        import { db, doc, getDoc, collection, getDocs } from './js/firebase-init.js';
+        
+        // Get product ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+        const detailContent = document.getElementById('detailContent');
+        
+        // Format price
+        function formatPrice(price) {
+            if (!price && price !== 0) return 'Rp 0';
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(price);
+        }
+        
+        // Load product detail
+        async function loadProductDetail() {
+            if (!productId) {
+                detailContent.innerHTML = `
+                    <div class="detail-not-found">
+                        <h2>Product Not Found</h2>
+                        <p>No product ID specified.</p>
+                        <a href="index.html#products" class="btn-primary">Browse Products</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Show loading
+            detailContent.innerHTML = `
+                <div class="detail-loading">
+                    <div class="spinner"></div>
+                    <p>Loading product details...</p>
+                </div>
+            `;
+            
+            try {
+                const productRef = doc(db, CONFIG.COLLECTIONS.PRODUCTS, productId);
+                const docSnap = await getDoc(productRef);
+                
+                if (!docSnap.exists()) {
+                    detailContent.innerHTML = `
+                        <div class="detail-not-found">
+                            <h2>Product Not Found</h2>
+                            <p>The product you're looking for doesn't exist or has been removed.</p>
+                            <a href="index.html#products" class="btn-primary">Browse Products</a>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const product = { id: docSnap.id, ...docSnap.data() };
+                
+                detailContent.innerHTML = `
+                    <div class="detail-container fade-in">
+                        <div class="detail-image">
+                            <img 
+                                src="${product.thumbnail || '/assets/placeholder.jpg'}" 
+                                alt="${product.name || 'Product'}"
+                                onerror="this.src='/assets/placeholder.jpg'"
+                            />
+                        </div>
+                        <div class="detail-info">
+                            <p class="detail-category">${product.category || CONFIG.DEFAULT_CATEGORY}</p>
+                            <h1 class="detail-name">${product.name || 'Untitled Product'}</h1>
+                            <p class="detail-price">${formatPrice(product.price)}</p>
+                            <p class="detail-description">${product.description || 'No description available.'}</p>
+                            <div class="detail-actions">
+                                <a href="checkout.html?id=${product.id}" class="btn-primary">Beli Sekarang</a>
+                                <a href="index.html#products" class="btn-secondary">Back to Shop</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Error loading product:', error);
+                detailContent.innerHTML = `
+                    <div class="detail-not-found">
+                        <h2>Error Loading Product</h2>
+                        <p>${error.message || 'Something went wrong. Please try again.'}</p>
+                        <a href="index.html#products" class="btn-primary">Browse Products</a>
+                    </div>
+                `;
+            }
+        }
+        
+        // Mobile nav toggle
+        document.querySelector('.nav-toggle')?.addEventListener('click', () => {
+            document.querySelector('.nav-toggle')?.classList.toggle('active');
+            document.querySelector('.nav-links')?.classList.toggle('active');
+        });
+        
+        // Load product
+        loadProductDetail();
+    </script>
+</body>
+</html>

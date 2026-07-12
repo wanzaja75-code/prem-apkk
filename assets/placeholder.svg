@@ -1,0 +1,5 @@
+<!-- assets/placeholder.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+    <rect width="400" height="300" fill="#1A1A1A"/>
+    <text x="200" y="150" font-family="Arial" font-size="20" fill="#444" text-anchor="middle">No Image</text>
+</svg>

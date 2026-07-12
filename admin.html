@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel - WANZ SHOP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+    <!-- Login Container -->
+    <div id="loginContainer" class="login-container" style="display: flex;">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>Admin Login</h1>
+                <p>WANZ SHOP Dashboard</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="admin@wanzshop.com" required />
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required />
+                </div>
+                <div id="loginError" class="login-error" style="display: none;"></div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="admin-panel" style="display: none;">
+        <!-- Admin Nav -->
+        <nav class="admin-nav">
+            <div class="admin-nav-container">
+                <div class="admin-nav-brand">
+                    <span class="logo-text">WANZ</span>
+                    <span class="logo-shop">SHOP</span>
+                    <span class="admin-badge">Admin</span>
+                </div>
+                <ul class="admin-nav-links">
+                    <li><a href="#" data-section="dashboard" class="active">Dashboard</a></li>
+                    <li><a href="#" data-section="products">Products</a></li>
+                    <li><a href="#" data-section="settings">Settings</a></li>
+                    <li><button id="logoutBtn" class="btn-logout">Logout</button></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Dashboard -->
+        <section id="dashboard" class="admin-section">
+            <div class="admin-container">
+                <div class="section-header">
+                    <h2 class="section-title">Dashboard</h2>
+                    <p class="section-subtitle">Overview of your store</p>
+                </div>
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <span class="stat-icon">📦</span>
+                        <div>
+                            <p class="stat-label">Total Products</p>
+                            <p class="stat-value" id="productCount">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Products -->
+        <section id="products" class="admin-section" style="display: none;">
+            <div class="admin-container">
+                <div class="section-header">
+                    <h2 class="section-title">Manage Products</h2>
+                    <p class="section-subtitle">Add, edit, or remove products</p>
+                </div>
+                
+                <!-- Product Form -->
+                <div class="product-form-container">
+                    <h3 id="productFormTitle">Add New Product</h3>
+                    <form id="productForm" class="admin-form">
+                        <input type="hidden" id="productId" />
+                        <div class="form-group">
+                            <label for="productName">Product Name *</label>
+                            <input type="text" id="productName" placeholder="Enter product name" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="productPrice">Price (IDR) *</label>
+                            <input type="number" id="productPrice" placeholder="Enter price" required min="0" />
+                        </div>
+                        <div class="form-group">
+                            <label for="productCategory">Category</label>
+                            <input type="text" id="productCategory" placeholder="e.g., App, Template, Asset" />
+                        </div>
+                        <div class="form-group">
+                            <label for="productDescription">Description</label>
+                            <textarea id="productDescription" rows="4" placeholder="Describe your product..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="productThumbnail">Thumbnail</label>
+                            <input type="file" id="productThumbnail" accept="image/*" />
+                            <div id="productThumbnailPreview" class="thumbnail-preview"></div>
+                        </div>
+                        <div id="productStatus" class="form-status"></div>
+                        <div class="form-actions">
+                            <button type="submit" id="submitBtn" class="btn-primary">Add Product</button>
+                            <button type="button" id="cancelBtn" class="btn-secondary" style="display: none;">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Products Table -->
+                <div class="products-table-container">
+                    <table class="products-table">
+                        <thead>
+                            <tr>
+                                <th>Thumbnail</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsList">
+                            <tr>
+                                <td colspan="5" style="text-align:center; padding: 40px; color: var(--text-secondary);">
+                                    Loading products...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings -->
+        <section id="settings" class="admin-section" style="display: none;">
+            <div class="admin-container">
+                <div class="section-header">
+                    <h2 class="section-title">Settings</h2>
+                    <p class="section-subtitle">Manage your store settings</p>
+                </div>
+                
+                <!-- QRIS -->
+                <div class="settings-card">
+                    <h3>QRIS Payment</h3>
+                    <p class="settings-desc">Upload QRIS image for payment page</p>
+                    <div class="settings-upload">
+                        <input type="file" id="qrisUpload" accept="image/*" />
+                        <div id="qrisPreview" class="settings-preview">
+                            <p style="color: var(--text-secondary);">No QRIS uploaded yet</p>
+                        </div>
+                        <div id="qrisStatus" class="settings-status"></div>
+                    </div>
+                </div>
+
+                <!-- Background -->
+                <div class="settings-card">
+                    <h3>Hero Background</h3>
+                    <p class="settings-desc">Upload background image for hero section</p>
+                    <div class="settings-upload">
+                        <input type="file" id="bgUpload" accept="image/*" />
+                        <div id="bgStatus" class="settings-status"></div>
+                    </div>
+                </div>
+
+                <!-- WhatsApp -->
+                <div class="settings-card">
+                    <h3>WhatsApp Number</h3>
+                    <p class="settings-desc">Set the WhatsApp number for order confirmation</p>
+                    <div class="settings-whatsapp">
+                        <div class="form-group" style="max-width: 400px;">
+                            <label for="whatsappNumber">WhatsApp Number</label>
+                            <input type="tel" id="whatsappNumber" placeholder="e.g., 6285136076430" />
+                        </div>
+                        <button id="saveWhatsappBtn" class="btn-primary">Save Number</button>
+                        <div id="whatsappStatus" class="settings-status"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script type="module" src="js/admin.js"></script>
+</body>
+</html>
