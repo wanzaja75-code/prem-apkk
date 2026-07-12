@@ -1,5 +1,5 @@
 /**
- * WANZ SHOP - Admin Panel
+ * WANZ SHOP - Admin Panel (Cloudinary Version)
  * Handles admin authentication, product management, and settings
  */
 
@@ -7,7 +7,6 @@ import { CONFIG } from './config.js';
 import { 
     auth,
     db,
-    storage,
     signInWithEmailAndPassword,
     signOut,
     onAuthStateChanged,
@@ -18,15 +17,56 @@ import {
     addDoc,
     updateDoc,
     deleteDoc,
-    ref,
-    uploadBytes,
-    getDownloadURL,
-    deleteObject,
     serverTimestamp,
     query,
     orderBy,
     setDoc
 } from './firebase-init.js';
+
+// ============================================
+// Cloudinary Configuration
+// ============================================
+const CLOUDINARY = {
+    CLOUD_NAME: 'neqxbkst',
+    UPLOAD_PRESET: 'prem-apk'  // Nama preset yang sudah dibuat
+};
+
+/**
+ * Upload file to Cloudinary
+ */
+async function uploadToCloudinary(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY.UPLOAD_PRESET);
+    
+    try {
+        const response = await fetch(
+            `https://api.cloudinary.com/v1_1/${CLOUDINARY.CLOUD_NAME}/image/upload`,
+            {
+                method: 'POST',
+                body: formData
+            }
+        );
+        
+        const data = await response.json();
+        
+        if (data.error) {
+            throw new Error(data.error.message || 'Upload failed');
+        }
+        
+        return {
+            success: true,
+            url: data.secure_url,
+            public_id: data.public_id
+        };
+    } catch (error) {
+        console.error('Cloudinary upload error:', error);
+        return {
+            success: false,
+            error: error.message
+        };
+    }
+}
 
 // ============================================
 // DOM References
@@ -123,7 +163,7 @@ const Auth = {
 };
 
 // ============================================
-// Product Management
+// Product Management (Cloudinary Version)
 // ============================================
 const ProductManager = {
     /**
@@ -195,56 +235,39 @@ const ProductManager = {
     },
     
     /**
-     * Upload thumbnail
+     * Upload thumbnail - PAKAI CLOUDINARY
      */
     async uploadThumbnail(file, productId) {
         try {
-            const storageRef = ref(storage, `products/${productId}/${file.name}`);
-            await uploadBytes(storageRef, file);
-            const url = await getDownloadURL(storageRef);
-            return { success: true, url };
+            const result = await uploadToCloudinary(file);
+            return result;
         } catch (error) {
             console.error('Error uploading thumbnail:', error);
-            return { success: false, error: error.message };
-        }
-    },
-    
-    /**
-     * Delete thumbnail
-     */
-    async deleteThumbnail(url) {
-        try {
-            const storageRef = ref(storage, url);
-            await deleteObject(storageRef);
-            return { success: true };
-        } catch (error) {
-            console.error('Error deleting thumbnail:', error);
             return { success: false, error: error.message };
         }
     }
 };
 
 // ============================================
-// Settings Management
+// Settings Management (Cloudinary Version)
 // ============================================
 const SettingsManager = {
     /**
-     * Upload QRIS image
+     * Upload QRIS image - PAKAI CLOUDINARY
      */
     async uploadQRIS(file) {
         try {
-            const storageRef = ref(storage, `qris/qris_${Date.now()}.jpg`);
-            await uploadBytes(storageRef, file);
-            const url = await getDownloadURL(storageRef);
+            const result = await uploadToCloudinary(file);
+            if (!result.success) return result;
             
             // Save URL to Firestore
             const settingsRef = doc(db, CONFIG.COLLECTIONS.SETTINGS, 'qris');
             await setDoc(settingsRef, { 
-                url, 
+                url: result.url, 
                 updatedAt: serverTimestamp() 
             }, { merge: true });
             
-            return { success: true, url };
+            return { success: true, url: result.url };
         } catch (error) {
             console.error('Error uploading QRIS:', error);
             return { success: false, error: error.message };
@@ -269,22 +292,21 @@ const SettingsManager = {
     },
     
     /**
-     * Upload background image
+     * Upload background image - PAKAI CLOUDINARY
      */
     async uploadBackground(file) {
         try {
-            const storageRef = ref(storage, `background/bg_${Date.now()}.jpg`);
-            await uploadBytes(storageRef, file);
-            const url = await getDownloadURL(storageRef);
+            const result = await uploadToCloudinary(file);
+            if (!result.success) return result;
             
             // Save URL to Firestore
             const settingsRef = doc(db, CONFIG.COLLECTIONS.SETTINGS, 'background');
             await setDoc(settingsRef, { 
-                url, 
+                url: result.url, 
                 updatedAt: serverTimestamp() 
             }, { merge: true });
             
-            return { success: true, url };
+            return { success: true, url: result.url };
         } catch (error) {
             console.error('Error uploading background:', error);
             return { success: false, error: error.message };
@@ -426,7 +448,7 @@ const AdminUI = {
         
         if (product.thumbnail) {
             DOM.productThumbnailPreview.innerHTML = `
-                <img src="${product.thumbnail}" alt="Current thumbnail" />
+                <img src="${product.thumbnail}" alt="Current thumbnail" style="max-width:150px; max-height:150px; object-fit:cover; border-radius:var(--radius-sm); border:1px solid var(--border-color);" />
                 <p style="font-size: var(--font-size-sm); color: var(--text-secondary);">
                     Current thumbnail
                 </p>
