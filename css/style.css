@@ -927,3 +927,36 @@ ul {
 .mb-5 {
     margin-bottom: var(--spacing-2xl);
 }
+
+/* ============================================
+   Admin Nav Button
+   ============================================ */
+.nav-links .nav-admin {
+    padding: 6px 16px;
+    background: rgba(232, 180, 184, 0.15);
+    border: 1px solid var(--accent-rose);
+    border-radius: var(--radius-full);
+    color: var(--accent-rose);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    transition: all var(--transition-fast);
+}
+
+.nav-links .nav-admin:hover {
+    background: var(--accent-rose);
+    color: var(--bg-primary);
+    transform: translateY(-1px);
+}
+
+.nav-links .nav-admin::after {
+    display: none;
+}
+
+/* Footer Admin Link */
+.footer-links .footer-admin {
+    color: var(--accent-rose);
+}
+
+.footer-links .footer-admin:hover {
+    color: var(--text-primary);
+}
