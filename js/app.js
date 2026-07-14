@@ -1,6 +1,5 @@
 /**
- * WANZ SHOP - Main Application
- * Handles product listing, cart, and UI interactions
+ * PAYzz SHOP - Main Application
  */
 
 import { CONFIG } from './config.js';
@@ -35,12 +34,33 @@ const DOM = {
 };
 
 // ============================================
+// Load Background from Firestore
+// ============================================
+async function loadBackground() {
+    try {
+        const settingsRef = doc(db, 'settings', 'background');
+        const docSnap = await getDoc(settingsRef);
+        
+        if (docSnap.exists() && docSnap.data().url) {
+            const bgUrl = docSnap.data().url;
+            const heroBg = document.querySelector('.hero-bg');
+            if (heroBg) {
+                heroBg.style.backgroundImage = `url('${bgUrl}')`;
+                heroBg.style.opacity = '1';
+                console.log('✅ Background loaded from Firestore');
+            }
+        } else {
+            console.log('ℹ️ No background found, using default');
+        }
+    } catch (error) {
+        console.error('❌ Error loading background:', error);
+    }
+}
+
+// ============================================
 // Product Service
 // ============================================
 const ProductService = {
-    /**
-     * Fetch all products from Firestore
-     */
     async fetchProducts() {
         try {
             const productsRef = collection(db, CONFIG.COLLECTIONS.PRODUCTS);
@@ -57,9 +77,6 @@ const ProductService = {
         }
     },
     
-    /**
-     * Listen for real-time product updates
-     */
     listenProducts(callback) {
         const productsRef = collection(db, CONFIG.COLLECTIONS.PRODUCTS);
         const q = query(productsRef, orderBy('createdAt', 'desc'));
@@ -78,9 +95,6 @@ const ProductService = {
 // UI Renderer
 // ============================================
 const UIRenderer = {
-    /**
-     * Render product cards
-     */
     renderProducts(products) {
         const grid = DOM.productsGrid;
         
@@ -122,9 +136,6 @@ const UIRenderer = {
         `).join('');
     },
     
-    /**
-     * Format price to IDR
-     */
     formatPrice(price) {
         if (!price) return 'Rp 0';
         return new Intl.NumberFormat('id-ID', {
@@ -135,9 +146,6 @@ const UIRenderer = {
         }).format(price);
     },
     
-    /**
-     * Show loading skeletons
-     */
     showSkeletons() {
         const grid = DOM.productsGrid;
         const skeletonCount = 6;
@@ -154,9 +162,6 @@ const UIRenderer = {
         `).join('');
     },
     
-    /**
-     * Add product to cart
-     */
     addToCart(productId) {
         const product = state.products.find(p => p.id === productId);
         if (!product) return;
@@ -171,15 +176,10 @@ const UIRenderer = {
             });
         }
         
-        // Show feedback
         this.showToast('Product added to cart!');
     },
     
-    /**
-     * Show toast notification
-     */
     showToast(message) {
-        // Create toast if it doesn't exist
         let toast = document.querySelector('.toast-notification');
         if (!toast) {
             toast = document.createElement('div');
@@ -215,7 +215,6 @@ const UIRenderer = {
     }
 };
 
-// Make UIRenderer globally accessible for inline onclick handlers
 window.UIRenderer = UIRenderer;
 
 // ============================================
@@ -223,13 +222,11 @@ window.UIRenderer = UIRenderer;
 // ============================================
 const Navigation = {
     init() {
-        // Mobile nav toggle
         DOM.navToggle?.addEventListener('click', () => {
             DOM.navToggle.classList.toggle('active');
             DOM.navLinks.classList.toggle('active');
         });
         
-        // Close nav on link click (mobile)
         DOM.navLinks?.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
                 DOM.navToggle?.classList.remove('active');
@@ -237,7 +234,6 @@ const Navigation = {
             });
         });
         
-        // Navbar scroll effect
         let lastScroll = 0;
         window.addEventListener('scroll', () => {
             const currentScroll = window.pageYOffset;
@@ -252,7 +248,6 @@ const Navigation = {
             lastScroll = currentScroll;
         });
         
-        // Active link highlight
         const sections = document.querySelectorAll('section[id]');
         const navLinks = DOM.navLinks?.querySelectorAll('a');
         
@@ -276,7 +271,7 @@ const Navigation = {
 };
 
 // ============================================
-// Intersection Observer for animations
+// Intersection Observer
 // ============================================
 const AnimationObserver = {
     init() {
@@ -301,33 +296,27 @@ const AnimationObserver = {
 // Initialize App
 // ============================================
 async function init() {
-    // Show skeletons
     UIRenderer.showSkeletons();
-    
-    // Initialize navigation
     Navigation.init();
-    
-    // Initialize animation observer
     AnimationObserver.init();
     
-    // Fetch products
+    // Load background from Firestore
+    await loadBackground();
+    
     const products = await ProductService.fetchProducts();
     state.products = products;
     state.isLoading = false;
     
-    // Render products
     UIRenderer.renderProducts(products);
     
-    // Set up real-time listener
     ProductService.listenProducts((updatedProducts) => {
         state.products = updatedProducts;
         UIRenderer.renderProducts(updatedProducts);
     });
 }
 
-// Run on DOM ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
 } else {
     init();
-}
+                                               }
